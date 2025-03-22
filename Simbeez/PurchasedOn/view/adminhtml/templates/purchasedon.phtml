@@ -1,0 +1,93 @@
+<style>
+.sum_label{
+  font-weight: 600;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+span.sum, span.refunded-sum, span.shipped-sum, span.total-complete-order-item-sum, span.total-closed-order-item-sum-without-refund {
+  background: red;
+  padding: 5px 15px;
+  border: 1px solid black;
+  border-radius: 5px;
+  color: white;
+  margin-right: 5px;
+}
+.status-data-container {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.9rem;
+}
+.status-data-container .si {
+    padding: 10px 20px;
+    margin-right: 10px;
+    border: 1px solid #fff;
+    transition: all 0.3s ease;
+}
+.status-data-container .si:hover {
+    border: 1px solid #000;
+}
+.status-data-container .si .t-o,.status-data-container .si .t-q {
+    font-weight: 600;
+}
+.status-data-container span.t-q-s {
+    font-size: 1.7rem;
+    font-style: italic;
+}
+.si:last-child {
+    margin-right: 0;
+}
+.si.complete {
+    background: green;
+    color: #fff;
+}
+.si.processing {
+    background: orange;
+    color: #fff;
+}
+.si.pending, .si.holded {
+    background: red;
+    color: #fff;
+}
+.si.closed,.si.canceled {
+    background: gray;
+    color: #fff;
+}
+
+
+</style>
+<h1 class="sum_label">
+    <span class="sum">
+        <?php echo $block->getSum();?>
+    </span> On Order, 
+    <span class="refunded-sum">
+        <?php echo $block->getSumRefunded(); ?>
+    </span> Refunded, 
+    <span class="shipped-sum">
+        <?php echo $block->getSumShipped(); ?>
+    </span> Shipped, 
+    <span class="total-complete-order-item-sum">
+        <?php echo $block->getCompleteOrderTotalItemQty(); ?>
+    </span> Complete Order Qty, 
+    <span class="total-closed-order-item-sum-without-refund">
+        <?php echo $block->getCloseOrderTotalItemQty(); ?>
+    </span> Closed Order Qty
+</h1>
+
+<?php
+if($statusData = $block->getQtyBasedOnOrderStatus()) {
+    echo "<div class='status-data-container'>";
+    foreach($statusData as $statusItem) {
+        ?>
+        <div class="si <?= $statusItem['status'] ?>">
+            <?= ucwords($statusItem['status']) ?>: <span class="t-o"><?= $statusItem['total_orders'] ? $statusItem['total_orders'] : 0 ?></span> <span class="t-q-s">(<?= __("Total Qty: ") ?><span class="t-q"><?= $statusItem['total_qty'] ? (int) $statusItem['total_qty'] : 0 ?></span>)</span>
+        </div>
+        <?php
+    }
+    echo "</div>";
+}
+?>
+
+<?php echo $block->getGridHtml(); ?>
